@@ -9,7 +9,6 @@ type DeviceMockupProps = {
 }
 
 const SHARE_COPY = 'I just joined the @openflip waitlist — AI red-teaming in your pocket. openflip.io'
-const WAITLIST_PRICE = '$150'
 
 function DPad() {
   return (
@@ -59,7 +58,7 @@ function SuccessScreen({
             #{(position ?? 0).toLocaleString()}
           </div>
           <div className="mt-1 font-display text-[1.15rem] uppercase tracking-[0.12em] text-cyan">
-            Price locked · {WAITLIST_PRICE}
+            Pocket AI red-team agent
           </div>
         </div>
       </div>

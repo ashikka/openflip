@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:cf": "wrangler pages dev --proxy 5173 --port 8788",
+    "db:local": "wrangler d1 execute openflip-waitlist-dev --local --file=./schema.sql",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

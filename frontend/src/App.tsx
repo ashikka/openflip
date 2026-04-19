@@ -8,15 +8,30 @@ function App() {
       <header className="sticky top-0 z-40 border-b-2 border-amber/40 bg-ink/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-shell items-center justify-between px-5 py-3 sm:px-8">
           <a href="#top" className="flex items-center gap-3">
-            <svg
-              viewBox="0 0 16 16"
-              className="h-8 w-8"
-              shapeRendering="crispEdges"
-              aria-hidden="true"
-            >
-              <rect width="16" height="16" fill="#0A0A0A" />
-              <path d="M3 2H13V5H7V7H12V10H7V14H3Z" fill="#FF8200" />
-              <rect x="11" y="12" width="2" height="2" fill="#00E5FF" />
+            <svg viewBox="0 0 24 24" className="h-8 w-8" aria-hidden="true">
+              <path
+                d="M9 5 L3 12 L9 19"
+                fill="none"
+                stroke="#FF8200"
+                strokeWidth="2.5"
+                strokeLinecap="square"
+                strokeLinejoin="miter"
+              />
+              <path
+                d="M15 5 L21 12 L15 19"
+                fill="none"
+                stroke="#FF8200"
+                strokeWidth="2.5"
+                strokeLinecap="square"
+                strokeLinejoin="miter"
+              />
+              <path
+                d="M15 4 L9 20"
+                fill="none"
+                stroke="#00E5FF"
+                strokeWidth="2.5"
+                strokeLinecap="square"
+              />
             </svg>
             <span className="font-display text-[2.2rem] uppercase leading-none tracking-[0.1em]">OpenFlip</span>
           </a>
