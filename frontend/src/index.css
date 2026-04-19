@@ -107,7 +107,7 @@ input {
   }
 
   .field {
-    @apply w-full border border-amber bg-ink px-3 py-2.5 font-display text-[1.5rem] uppercase tracking-[0.04em] leading-none text-amber placeholder:text-amber/40 focus:border-cyan focus:outline-none sm:border-2 sm:px-4 sm:py-3 sm:text-[1.9rem] sm:tracking-[0.06em];
+    @apply w-full border border-amber bg-ink px-3 py-2.5 font-display text-[1.05rem] tracking-[-0.01em] leading-none text-amber placeholder:text-amber/40 focus:border-cyan focus:outline-none sm:border-2 sm:px-4 sm:py-3 sm:text-[1.2rem];
   }
 
   .chip {

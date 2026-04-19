@@ -31,7 +31,7 @@ export default function Hero() {
 
         <div className="relative">
           <div className="absolute -left-3 top-0 hidden h-full w-1 bg-amber/60 sm:block" />
-          <h1 className="font-display text-[2.6rem] uppercase leading-[0.92] sm:text-[4.4rem] lg:text-[5.2rem]">
+          <h1 className="font-display text-[2.4rem] leading-[1.02] tracking-[-0.01em] sm:text-[3.8rem] lg:text-[4.6rem]">
             Your pocket
             <br />
             AI red-team
@@ -42,7 +42,7 @@ export default function Hero() {
           </h1>
         </div>
 
-        <div className="hidden items-center gap-3 font-display text-[1.2rem] uppercase tracking-[0.16em] text-amber/80 sm:flex sm:text-[1.35rem]">
+        <div className="hidden items-center gap-3 font-display text-[0.95rem] tracking-[0.04em] text-amber/80 sm:flex sm:text-[1.05rem]">
           <span>Listen</span>
           <span className="text-amber/40">·</span>
           <span>Learn</span>
@@ -64,8 +64,8 @@ export default function Hero() {
           <span aria-hidden="true" className="pointer-events-none absolute -right-[2px] -bottom-[2px] hidden h-3 w-3 border-r-2 border-b-2 border-cyan sm:block" />
 
           <div className="mb-3 flex items-baseline justify-between gap-3 sm:mb-4 sm:gap-4">
-            <span className="font-display text-[1.55rem] uppercase leading-none tracking-[0.08em] text-amber sm:text-[2.3rem]">
-              &gt; Join the waitlist
+            <span className="font-display text-[1.3rem] leading-none tracking-[-0.01em] text-amber sm:text-[1.75rem]">
+              <span className="text-amber/50">&gt;</span> Join the waitlist
               <span className="blink-cursor">_</span>
             </span>
             <span className="hidden label-cyan whitespace-nowrap sm:inline">Early access</span>

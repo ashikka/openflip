@@ -30,7 +30,7 @@ export default function Features() {
           <span className="inline-block h-1.5 w-1.5 bg-cyan" />
           <span>// Operational Brief</span>
         </div>
-        <h2 className="mt-2 max-w-[22ch] font-display text-[2rem] uppercase leading-[0.95] sm:text-[3.6rem]">
+        <h2 className="mt-2 max-w-[22ch] font-display text-[1.8rem] leading-[1.05] tracking-[-0.01em] sm:text-[3rem]">
           How it works.
           <br />
           <span className="text-highlight">Why you&apos;ll carry it.</span>
@@ -70,7 +70,7 @@ export default function Features() {
 
       <div className="mt-6 border border-cyan/60 bg-ink p-4 shadow-glow sm:mt-8 sm:border-2 sm:p-5">
         <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-          <div className="font-display text-[1.6rem] uppercase leading-tight text-cyan sm:text-[2.6rem]">
+          <div className="font-display text-[1.4rem] leading-tight tracking-[-0.01em] text-cyan sm:text-[2rem]">
             One device · Every protocol · Zero cloud.
           </div>
           <span className="hidden chip-cyan whitespace-nowrap sm:inline-flex">Bit v0.1</span>

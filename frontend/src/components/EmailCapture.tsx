@@ -127,7 +127,7 @@ export default function EmailCapture({
       {status ? (
         <p
           aria-live="polite"
-          className={`mt-2 font-display text-[1.35rem] uppercase tracking-[0.08em] ${
+          className={`mt-2 font-display text-[1rem] tracking-[-0.01em] ${
             status.tone === 'success' ? 'text-cyan' : 'text-highlight'
           }`}
         >

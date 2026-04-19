@@ -14,7 +14,7 @@ function App() {
               className="h-7 w-auto sm:h-9"
               style={{ imageRendering: 'pixelated' }}
             />
-            <span className="font-display text-[1.7rem] uppercase leading-none tracking-[0.1em] sm:text-[2.2rem]">OpenFlip</span>
+            <span className="font-display text-[1.5rem] leading-none tracking-[-0.01em] sm:text-[1.85rem]">OpenFlip</span>
           </a>
           <a href="#top" className="btn !py-1.5 !px-2.5 !text-[1.1rem] sm:!py-2 sm:!px-3 sm:!text-[1.3rem]">Join</a>
         </div>
