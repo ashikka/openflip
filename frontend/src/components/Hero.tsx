@@ -32,12 +32,10 @@ export default function Hero() {
         <div className="relative">
           <div className="absolute -left-3 top-0 hidden h-full w-1 bg-amber/60 sm:block" />
           <h1 className="font-display text-[2.4rem] leading-[1.02] tracking-[-0.01em] sm:text-[3.8rem] lg:text-[4.6rem]">
-            Your pocket
-            <br />
-            AI red-team
+            The AI hacker
             <br />
             <span className="text-highlight">
-              agent.<span className="blink-cursor text-amber">_</span>
+              in your pocket.<span className="blink-cursor text-amber">_</span>
             </span>
           </h1>
         </div>
@@ -52,9 +50,9 @@ export default function Hero() {
           <span className="text-cyan">v0.1 preview</span>
         </div>
 
-        <p className="max-w-[48ch] text-[0.8rem] leading-6 text-amber/80 sm:text-[0.95rem] sm:leading-7">
-          Listens on Sub-GHz, NFC, and BLE — then learns new tricks from the open internet on demand.
-          Pocket-sized, offline-first, community-powered.
+        <p className="max-w-[52ch] text-[0.8rem] leading-6 text-amber/80 sm:text-[0.95rem] sm:leading-7">
+          Talks to every key fob, badge, door, and beacon around you.
+          Doesn&apos;t know one? It fetches the module and learns — live, on demand.
         </p>
 
         <div className="relative panel p-4 sm:p-5">
