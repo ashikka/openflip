@@ -1,7 +1,6 @@
 "$schema" = "./node_modules/wrangler/config-schema.json"
 
 name = "openflip-landing"
-account_id = "2946983c2f4d5a5f4c669d74ce5f42ca"
 pages_build_output_dir = "./dist"
 compatibility_date = "2026-04-19"
 
