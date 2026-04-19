@@ -16,9 +16,13 @@
 #include <furi.h>
 #include <gui/gui.h>
 #include <input/input.h>
+#include <loader/loader.h>
 #include <notification/notification.h>
 #include <notification/notification_messages.h>
 #include <stdio.h>
+
+/* Path to BLE Spam FAP on Unleashed firmware SD card */
+#define BLE_SPAM_PATH "/ext/apps/Bluetooth/ble_spam.fap"
 
 /* ─── Timing (50 ms per tick ≈ 20 fps) ──────────────────────── */
 #define TICK_MS        50
@@ -28,34 +32,22 @@
 #define RECV_DONE_WAIT 15   /* 0.75 s pause after bar fills */
 
 /* ─── Module database (mirrors phone app) ───────────────────── */
-#define MOD_COUNT 5
+#define MOD_COUNT 1
 
 static const char* mod_fap[MOD_COUNT] = {
-    "wifi_deauth_ring.fap",
-    "ir_samsung_rce.fap",
-    "ble_lock_replay.fap",
-    "subghz_tesla_relay.fap",
-    "zigbee_hue_takeover.fap",
+    "ble_spam_ios.fap",
 };
 
 static const char* mod_size[MOD_COUNT] = {
-    "11.4 KB", "14.2 KB", "8.7 KB", "19.8 KB", "16.1 KB",
+    "12.6 KB",
 };
 
 static const char* mod_atk[MOD_COUNT] = {
-    "Wi-Fi Deauth",
-    "IR Cmd Inject",
-    "BLE Replay",
-    "Sub-GHz Rolljam",
-    "Zigbee Touchlink",
+    "BLE Spam Flood",
 };
 
 static const char* mod_tgt[MOD_COUNT] = {
-    "Ring Doorbell",
-    "Samsung TV",
-    "Kwikset Lock",
-    "Tesla Key Fob",
-    "Philips Hue",
+    "iPhone 16",
 };
 
 /* ─── Phase enum ────────────────────────────────────────────── */
@@ -65,6 +57,7 @@ typedef enum {
     PhaseInstall,
     PhaseExecute,
     PhaseComplete,
+    PhaseLaunch,   /* brief "Launching BLE Spam..." before chaining */
 } Phase;
 
 /* ─── App state ─────────────────────────────────────────────── */
@@ -76,6 +69,7 @@ typedef struct {
     uint8_t  wait;        /* transition delay counter */
     uint8_t  mod;         /* index into module tables */
     bool     running;
+    bool     launch_ble;  /* flag: chain into BLE Spam on exit */
     FuriMutex* mutex;
 } App;
 
@@ -206,12 +200,31 @@ static void draw_cb(Canvas* canvas, void* ctx) {
         canvas_set_font(canvas, FontPrimary);
         canvas_draw_str_aligned(
             canvas, 64, 48, AlignCenter, AlignCenter,
-            "ATTACK COMPLETE");
+            "MODULE READY");
 
         canvas_set_font(canvas, FontSecondary);
         canvas_draw_str_aligned(
             canvas, 64, 60, AlignCenter, AlignCenter,
-            "[OK] Again  [<] Exit");
+            "[OK] BLE Attack  [<] Exit");
+        break;
+    }
+
+    /* ── LAUNCHING BLE SPAM ───────────────────────────────── */
+    case PhaseLaunch: {
+        canvas_set_font(canvas, FontSecondary);
+
+        int dots = (app->phase_tick / 5) % 4;
+        snprintf(buf, sizeof(buf), "Launching BLE Spam%.*s", dots, "...");
+        canvas_draw_str_aligned(
+            canvas, 64, 32, AlignCenter, AlignCenter, buf);
+
+        /* Signal burst animation */
+        int cx = 64, cy = 48;
+        canvas_draw_disc(canvas, cx, cy, 2);
+        for(int i = 0; i < 3; i++) {
+            int r = ((app->phase_tick * 3 + i * 8) % 24) + 3;
+            canvas_draw_circle(canvas, cx, cy, r);
+        }
         break;
     }
     }
@@ -237,6 +250,7 @@ int32_t openflip_recv_app(void* p) {
         .wait       = 0,
         .mod        = (uint8_t)(furi_get_tick() % MOD_COUNT),
         .running    = true,
+        .launch_ble = false,
     };
 
     app.mutex = furi_mutex_alloc(FuriMutexTypeNormal);
@@ -267,13 +281,10 @@ int32_t openflip_recv_app(void* p) {
             }
             if(event.key == InputKeyOk &&
                app.phase == PhaseComplete) {
-                /* Restart the demo */
+                /* Transition to launch phase → chain into BLE Spam */
                 furi_mutex_acquire(app.mutex, FuriWaitForever);
-                app.phase      = PhaseConnect;
+                app.phase      = PhaseLaunch;
                 app.phase_tick = 0;
-                app.progress   = 0;
-                app.wait       = 0;
-                app.mod = (uint8_t)(furi_get_tick() % MOD_COUNT);
                 furi_mutex_release(app.mutex);
             }
         }
@@ -331,6 +342,16 @@ int32_t openflip_recv_app(void* p) {
 
         case PhaseComplete:
             break;
+
+        case PhaseLaunch:
+            /* Show animation briefly, then enqueue BLE Spam and exit */
+            if(app.phase_tick >= 30) { /* 1.5 s */
+                app.launch_ble = true;
+                app.running    = false;
+            }
+            if(app.phase_tick % 4 == 0)
+                notification_message(notif, &sequence_blink_red_10);
+            break;
         }
 
         furi_mutex_release(app.mutex);
@@ -344,6 +365,13 @@ int32_t openflip_recv_app(void* p) {
     view_port_free(vp);
     furi_message_queue_free(queue);
     furi_mutex_free(app.mutex);
+
+    /* ── Chain into BLE Spam if requested ── */
+    if(app.launch_ble) {
+        Loader* loader = furi_record_open(RECORD_LOADER);
+        loader_start_with_gui_error(loader, BLE_SPAM_PATH, NULL);
+        furi_record_close(RECORD_LOADER);
+    }
 
     return 0;
 }

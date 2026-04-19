@@ -270,21 +270,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:var(--mon
    DATA
    ============================================================ */
 const DEVICES=[
-  {name:"Samsung Smart TV",type:"Consumer IoT / Smart Display",proto:"Wi-Fi 6 (802.11ax)",
-   mac:"A8:23:FE:9C:01:D7",fw:"Tizen OS 7.0.1",vuln:"CVE-2024-3891 \u2014 IR CMD INJECTION",
-   mod:"ir_samsung_rce",sz:"14.2 KB",atk:"IR Blaster Replay + Deauth"},
-  {name:"Kwikset Smart Lock",type:"BLE Access Control Device",proto:"Bluetooth LE 5.2",
-   mac:"D4:F5:13:AA:72:E0",fw:"KS-Lock v3.8.2",vuln:"CVE-2024-5120 \u2014 BLE REPLAY ATTACK",
-   mod:"ble_lock_replay",sz:"8.7 KB",atk:"BLE Signal Replay"},
-  {name:"Ring Doorbell Pro",type:"IoT Surveillance / Wi-Fi Camera",proto:"Wi-Fi 5 (802.11ac)",
-   mac:"FC:A1:83:E7:44:9B",fw:"Ring OS 4.51.20",vuln:"CVE-2024-2203 \u2014 DEAUTH FLOOD",
-   mod:"wifi_deauth_ring",sz:"11.4 KB",atk:"Wi-Fi Deauth + Camera Freeze"},
-  {name:"Tesla Model 3 Key Fob",type:"Sub-GHz RF Transponder",proto:"Sub-GHz (315 MHz FSK)",
-   mac:"N/A (RF ID: 0xE7A3F1)",fw:"TKF v2.1.0",vuln:"CVE-2023-9910 \u2014 ROLLING CODE PREDICT",
-   mod:"subghz_tesla_relay",sz:"19.8 KB",atk:"Sub-GHz Relay + Rolljam"},
-  {name:"Philips Hue Bridge",type:"Zigbee Gateway Controller",proto:"Zigbee 3.0 / 802.15.4",
-   mac:"00:17:88:7C:AB:31",fw:"HueBridge v1946157080",vuln:"CVE-2024-0771 \u2014 TOUCHLINK EXPLOIT",
-   mod:"zigbee_hue_takeover",sz:"16.1 KB",atk:"Zigbee Touchlink Commissioning"}
+  {name:"iPhone 16",type:"BLE Smartphone / Personal Device",proto:"Bluetooth 5.3 LE",
+   mac:"F8:4D:89:2A:C7:E1",fw:"iOS 18.4.1 (22E252)",vuln:"CVE-2024-7231 \u2014 BLE SPAM FLOOD",
+   mod:"ble_spam_ios",sz:"12.6 KB",atk:"BLE Spam + Popup Flood"}
 ];
 const H="0123456789ABCDEF",rH=n=>[...Array(n)].map(()=>H[Math.random()*16|0]).join(""),
       sleep=ms=>new Promise(r=>setTimeout(r,ms)),
