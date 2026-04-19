@@ -1,0 +1,32 @@
+node_modules/
+dist/
+.turbo/
+*.tsbuildinfo
+.env
+.env.local
+.DS_Store
+
+# Expo / React Native
+apps/mobile/.expo/
+apps/mobile/ios/
+apps/mobile/android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Module compilation temp files
+packages/server/tmp/
+
+# Wrangler
+.wrangler/
+
+# Flipper build
+.ufbt/
+static_app/flipper/dist/
+
+# IDE
+.vscode/
+.idea/

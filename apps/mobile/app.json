@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "OpenFlip",
+    "slug": "openflip",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "openflip",
+    "splash": {
+      "backgroundColor": "#000000"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.openflip.app",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "OpenFlip needs Bluetooth to communicate with your Flipper Zero device.",
+        "NSBluetoothPeripheralUsageDescription": "OpenFlip needs Bluetooth to communicate with your Flipper Zero device.",
+        "NSCameraUsageDescription": "OpenFlip uses the camera to identify hardware devices.",
+        "NSPhotoLibraryUsageDescription": "OpenFlip can identify devices from photos in your library."
+      }
+    },
+    "android": {
+      "package": "com.openflip.app",
+      "permissions": [
+        "BLUETOOTH",
+        "BLUETOOTH_ADMIN",
+        "BLUETOOTH_SCAN",
+        "BLUETOOTH_CONNECT",
+        "ACCESS_FINE_LOCATION",
+        "CAMERA"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      [
+        "react-native-ble-plx",
+        {
+          "isBackgroundEnabled": false,
+          "modes": ["central"]
+        }
+      ]
+    ]
+  }
+}

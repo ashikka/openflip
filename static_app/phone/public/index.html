@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0f">
+<title>OpenFlip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS RESET + ROOT
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --o:#ff6600;--o2:rgba(255,102,0,.4);--o1:rgba(255,102,0,.12);
+  --c:#00e5ff;--c1:rgba(0,229,255,.25);
+  --r:#ff2244;--g:#00ff88;
+  --bg:#0a0a0f;
+  --mono:'Share Tech Mono',monospace;
+  --head:'Orbitron',sans-serif;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:var(--mono);color:var(--o)}
+
+/* ============================================================
+   CAMERA
+   ============================================================ */
+#cam{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0;transition:opacity .5s}
+#cam.on{opacity:1}
+#cam-dim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1;display:none}
+#cam-dim.on{display:block}
+
+/* ============================================================
+   INIT SCREEN
+   ============================================================ */
+#init{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--bg)}
+#init.hide{display:none}
+
+.hex-grid{position:absolute;inset:0;overflow:hidden;opacity:.04}
+.hex-grid span{position:absolute;font-size:9px;color:var(--o);animation:drift 12s linear infinite}
+@keyframes drift{0%{transform:translateY(110vh)}100%{transform:translateY(-10vh)}}
+
+.logo{font-family:var(--head);font-weight:900;font-size:clamp(28px,9vw,42px);color:var(--o);letter-spacing:5px;
+  text-shadow:0 0 30px var(--o2),0 0 80px rgba(255,102,0,.1)}
+.logo-sub{font-size:10px;color:var(--c);letter-spacing:8px;margin-top:2px}
+.logo-rule{width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--o),transparent);margin:8px 0 4px}
+.logo-ver{font-size:9px;color:#333;letter-spacing:3px}
+
+#scan-btn{
+  margin-top:28px;position:relative;overflow:hidden;cursor:pointer;
+  background:transparent;border:1px solid var(--o);
+  padding:18px 50px;
+  font-family:var(--head);font-weight:700;font-size:14px;letter-spacing:4px;color:var(--o);
+  text-transform:uppercase;-webkit-user-select:none;user-select:none;
+  transition:background .15s,color .15s}
+#scan-btn:active{background:var(--o);color:var(--bg)}
+.btn-sweep{position:absolute;top:0;bottom:0;width:90px;
+  background:linear-gradient(90deg,transparent,rgba(255,102,0,.18),transparent);
+  animation:bsweep 2.4s linear infinite}
+@keyframes bsweep{0%{left:-90px}100%{left:calc(100% + 90px)}}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+#topbar{position:fixed;top:0;left:0;right:0;z-index:60;
+  display:none;align-items:center;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top,14px) + 10px) 16px 10px;
+  background:linear-gradient(180deg,rgba(10,10,15,.85) 60%,transparent)}
+#topbar.on{display:flex}
+#topbar .tl{font-family:var(--head);font-weight:900;font-size:13px;color:var(--o);letter-spacing:2px}
+#topbar .tr{font-size:9px;color:var(--c);letter-spacing:2px;display:flex;align-items:center;gap:5px}
+.blink{animation:bk 1s step-end infinite}
+@keyframes bk{50%{opacity:0}}
+
+/* ============================================================
+   HUD CORNERS + SCAN LINES
+   ============================================================ */
+#hud{position:fixed;inset:0;z-index:10;pointer-events:none;display:none}
+#hud.on{display:block}
+#hud::after{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,102,0,.025) 2px,rgba(255,102,0,.025) 4px)}
+.cn{position:absolute;width:32px;height:32px;border-color:var(--o);border-style:solid;border-width:0;opacity:.7}
+.cn.tl{top:16px;left:16px;border-top-width:2px;border-left-width:2px}
+.cn.tr{top:16px;right:16px;border-top-width:2px;border-right-width:2px}
+.cn.bl{bottom:16px;left:16px;border-bottom-width:2px;border-left-width:2px}
+.cn.br{bottom:16px;right:16px;border-bottom-width:2px;border-right-width:2px}
+
+/* ============================================================
+   RETICLE
+   ============================================================ */
+#reticle{position:fixed;top:50%;left:50%;z-index:15;display:none;
+  transform:translate(-50%,-50%)}
+#reticle.on{display:block}
+.ret-wrap{width:52vw;height:52vw;max-width:240px;max-height:240px;position:relative}
+.ring{position:absolute;inset:0;border-radius:50%;border:1px solid var(--o);opacity:.55}
+.ring:nth-child(1){animation:sp 3s linear infinite}
+.ring:nth-child(2){inset:14%;border-style:dashed;border-color:var(--c);animation:sp 5s linear infinite reverse}
+.ring:nth-child(3){inset:30%;animation:sp 2s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ch,.cv{position:absolute;background:var(--o);opacity:.2}
+.ch{top:50%;left:0;right:0;height:1px}
+.cv{left:50%;top:0;bottom:0;width:1px}
+.cdot{position:absolute;top:50%;left:50%;width:5px;height:5px;border-radius:50%;background:var(--o);
+  transform:translate(-50%,-50%);box-shadow:0 0 8px var(--o)}
+/* pulse */
+.ret-wrap{animation:rpulse 1.8s ease-in-out infinite}
+@keyframes rpulse{0%,100%{transform:scale(.92)}50%{transform:scale(1.04)}}
+
+/* ============================================================
+   SWEEP LINE
+   ============================================================ */
+#sweep{position:fixed;left:0;right:0;height:2px;z-index:14;display:none;
+  background:linear-gradient(90deg,transparent,var(--o),transparent);
+  box-shadow:0 0 16px var(--o),0 0 40px var(--o2)}
+#sweep.on{display:block;animation:sw 2.2s ease-in-out infinite}
+@keyframes sw{0%,100%{top:14%}50%{top:86%}}
+
+/* ============================================================
+   DATA STREAM (left)
+   ============================================================ */
+#datastream{position:fixed;left:14px;top:80px;z-index:16;display:none;
+  max-width:46%;max-height:58%;overflow:hidden}
+#datastream.on{display:block}
+#datastream .ln{font-size:9px;line-height:1.7;color:var(--o);opacity:.65;white-space:nowrap;overflow:hidden;
+  animation:typeIn .25s ease forwards;opacity:0}
+@keyframes typeIn{to{opacity:.65}}
+
+/* ============================================================
+   TELEMETRY (right)
+   ============================================================ */
+#telem{position:fixed;right:14px;top:80px;z-index:16;text-align:right;display:none}
+#telem.on{display:block}
+#telem div{font-size:9px;line-height:1.7;color:var(--c);opacity:.45}
+
+/* ============================================================
+   DEVICE CARD
+   ============================================================ */
+#devcard{position:fixed;bottom:80px;left:14px;right:14px;z-index:30;display:none;
+  background:rgba(10,10,15,.93);border:1px solid var(--o);border-radius:6px;padding:18px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#devcard.on{display:block;animation:su .4s ease-out}
+@keyframes su{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.dc-hdr{font-family:var(--head);font-size:9px;color:var(--c);letter-spacing:4px;padding-bottom:8px;margin-bottom:10px;
+  border-bottom:1px solid var(--o1)}
+.dc-name{font-family:var(--head);font-size:19px;font-weight:700;color:var(--o);
+  text-shadow:0 0 12px var(--o2);margin-bottom:2px}
+.dc-type{font-size:11px;color:#555;margin-bottom:12px}
+.dc-row{font-size:10px;line-height:2.1;color:var(--o);opacity:.8}
+.dc-row span{color:var(--c)}
+.dc-tag{display:inline-block;margin-top:10px;border:1px solid var(--r);color:var(--r);
+  font-size:8px;padding:3px 10px;letter-spacing:1.5px}
+
+/* ============================================================
+   UPLOAD PANEL
+   ============================================================ */
+#upload{position:fixed;bottom:0;left:0;right:0;z-index:40;display:none;
+  background:rgba(10,10,15,.96);border-top:1px solid var(--o1);
+  padding:20px 16px calc(var(--safe-b) + 22px);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#upload.on{display:block;animation:su .3s ease-out}
+.up-title{font-family:var(--head);font-size:11px;letter-spacing:2px;color:var(--o);margin-bottom:5px}
+.up-status{font-size:10px;color:var(--c);margin-bottom:13px}
+.trk{width:100%;height:4px;background:var(--o1);border-radius:2px;overflow:hidden;margin-bottom:5px}
+.bar{height:100%;border-radius:2px;width:0%;transition:width 60ms linear}
+.bar.compile{background:linear-gradient(90deg,var(--o),#ff8800);box-shadow:0 0 8px var(--o)}
+.bar.xfer{background:linear-gradient(90deg,var(--c),#00aaff);box-shadow:0 0 8px var(--c)}
+.up-pct{font-size:10px;text-align:right;margin-bottom:10px}
+.mod-info{border-top:1px solid var(--o1);padding-top:12px;font-size:9px;line-height:2.1;color:#444}
+.mod-info b{color:var(--o);font-weight:400}
+
+/* ============================================================
+   SUCCESS
+   ============================================================ */
+#success{position:fixed;inset:0;z-index:200;display:none;
+  flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  background:rgba(10,10,15,.96)}
+#success.on{display:flex;animation:fi .5s ease-out}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.s-ring{width:80px;height:80px;border:2px solid var(--g);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  animation:gpulse 1.6s ease-in-out infinite}
+@keyframes gpulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,.35)}50%{box-shadow:0 0 0 22px rgba(0,255,136,0)}}
+.s-ring svg{width:38px;height:38px}
+.s-ring polyline{stroke:var(--g);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:60;stroke-dashoffset:60;animation:chk .55s .3s ease-out forwards}
+@keyframes chk{to{stroke-dashoffset:0}}
+.s-title{font-family:var(--head);font-size:17px;font-weight:700;color:var(--g);letter-spacing:3px;
+  text-shadow:0 0 20px rgba(0,255,136,.25)}
+.s-sub{font-size:11px;color:var(--c);letter-spacing:2px}
+#reset-btn{margin-top:22px;background:transparent;border:1px solid var(--o);
+  padding:14px 38px;cursor:pointer;
+  font-family:var(--head);font-size:11px;font-weight:700;letter-spacing:3px;color:var(--o);
+  text-transform:uppercase;transition:background .15s,color .15s}
+#reset-btn:active{background:var(--o);color:var(--bg)}
+
+/* ============================================================
+   GLITCH FLASH
+   ============================================================ */
+.glitch{animation:gl .12s ease-in-out}
+@keyframes gl{0%{filter:hue-rotate(40deg) brightness(1.5)}50%{filter:hue-rotate(-40deg) brightness(.8)}100%{filter:none}}
+</style>
+</head>
+<body>
+
+<!-- Camera -->
+<video id="cam" autoplay playsinline muted></video>
+<div id="cam-dim"></div>
+
+<!-- HUD -->
+<div id="hud"><div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div></div>
+
+<!-- Top bar -->
+<div id="topbar">
+  <div class="tl">OPENFLIP</div>
+  <div class="tr"><span class="blink">&#9679;</span> <span id="status-txt">SCANNING</span></div>
+</div>
+
+<!-- Init screen -->
+<div id="init">
+  <div class="hex-grid" id="hex-bg"></div>
+  <div class="logo">OPENFLIP</div>
+  <div class="logo-sub">RED TEAM TOOLKIT</div>
+  <div class="logo-rule"></div>
+  <div class="logo-ver">v0.1.0</div>
+  <button id="scan-btn"><span class="btn-sweep"></span>SCAN DEVICE</button>
+</div>
+
+<!-- Scan elements -->
+<div id="reticle">
+  <div class="ret-wrap">
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div class="ch"></div><div class="cv"></div><div class="cdot"></div>
+  </div>
+</div>
+<div id="sweep"></div>
+<div id="datastream"></div>
+<div id="telem"></div>
+
+<!-- Device card -->
+<div id="devcard">
+  <div class="dc-hdr">TARGET IDENTIFIED</div>
+  <div class="dc-name" id="d-name"></div>
+  <div class="dc-type" id="d-type"></div>
+  <div class="dc-row" id="d-rows"></div>
+  <div class="dc-tag" id="d-vuln"></div>
+</div>
+
+<!-- Upload panel -->
+<div id="upload">
+  <div class="up-title" id="up-title"></div>
+  <div class="up-status" id="up-status"></div>
+  <div class="trk"><div class="bar compile" id="up-bar"></div></div>
+  <div class="up-pct" id="up-pct">0%</div>
+  <div class="mod-info" id="mod-info"></div>
+</div>
+
+<!-- Success -->
+<div id="success">
+  <div class="s-ring"><svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,6"/></svg></div>
+  <div class="s-title">MODULE DEPLOYED</div>
+  <div class="s-sub">Flipper Zero ready to execute</div>
+  <button id="reset-btn">SCAN AGAIN</button>
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const DEVICES=[
+  {name:"Samsung Smart TV",type:"Consumer IoT / Smart Display",proto:"Wi-Fi 6 (802.11ax)",
+   mac:"A8:23:FE:9C:01:D7",fw:"Tizen OS 7.0.1",vuln:"CVE-2024-3891 \u2014 IR CMD INJECTION",
+   mod:"ir_samsung_rce",sz:"14.2 KB",atk:"IR Blaster Replay + Deauth"},
+  {name:"Kwikset Smart Lock",type:"BLE Access Control Device",proto:"Bluetooth LE 5.2",
+   mac:"D4:F5:13:AA:72:E0",fw:"KS-Lock v3.8.2",vuln:"CVE-2024-5120 \u2014 BLE REPLAY ATTACK",
+   mod:"ble_lock_replay",sz:"8.7 KB",atk:"BLE Signal Replay"},
+  {name:"Ring Doorbell Pro",type:"IoT Surveillance / Wi-Fi Camera",proto:"Wi-Fi 5 (802.11ac)",
+   mac:"FC:A1:83:E7:44:9B",fw:"Ring OS 4.51.20",vuln:"CVE-2024-2203 \u2014 DEAUTH FLOOD",
+   mod:"wifi_deauth_ring",sz:"11.4 KB",atk:"Wi-Fi Deauth + Camera Freeze"},
+  {name:"Tesla Model 3 Key Fob",type:"Sub-GHz RF Transponder",proto:"Sub-GHz (315 MHz FSK)",
+   mac:"N/A (RF ID: 0xE7A3F1)",fw:"TKF v2.1.0",vuln:"CVE-2023-9910 \u2014 ROLLING CODE PREDICT",
+   mod:"subghz_tesla_relay",sz:"19.8 KB",atk:"Sub-GHz Relay + Rolljam"},
+  {name:"Philips Hue Bridge",type:"Zigbee Gateway Controller",proto:"Zigbee 3.0 / 802.15.4",
+   mac:"00:17:88:7C:AB:31",fw:"HueBridge v1946157080",vuln:"CVE-2024-0771 \u2014 TOUCHLINK EXPLOIT",
+   mod:"zigbee_hue_takeover",sz:"16.1 KB",atk:"Zigbee Touchlink Commissioning"}
+];
+const H="0123456789ABCDEF",rH=n=>[...Array(n)].map(()=>H[Math.random()*16|0]).join(""),
+      sleep=ms=>new Promise(r=>setTimeout(r,ms)),
+      $=s=>document.getElementById(s),
+      on=(el,c)=>$(el).classList.add(c),
+      off=(el,c)=>$(el).classList.remove(c);
+
+let dev,telemTimer;
+
+/* ============================================================
+   FLOATING HEX BACKGROUND
+   ============================================================ */
+(function initHex(){
+  const g=$("hex-bg");
+  for(let i=0;i<40;i++){
+    const s=document.createElement("span");
+    s.textContent=rH(6);
+    s.style.left=Math.random()*100+"%";
+    s.style.animationDuration=(8+Math.random()*12)+"s";
+    s.style.animationDelay=(-Math.random()*12)+"s";
+    g.appendChild(s);
+  }
+})();
+
+/* ============================================================
+   START SCAN
+   ============================================================ */
+$("scan-btn").onclick=startScan;
+$("reset-btn").onclick=resetAll;
+
+async function startScan(){
+  dev=DEVICES[Math.random()*DEVICES.length|0];
+
+  /* camera */
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+    $("cam").srcObject=stream;
+    on("cam","on");
+  }catch(e){/* no camera, still works */}
+
+  on("cam-dim","on"); on("init","hide"); on("hud","on"); on("topbar","on");
+  $("status-txt").textContent="SCANNING";
+
+  await sleep(300);
+
+  /* phase 1 — scanning */
+  on("reticle","on"); on("sweep","on"); on("datastream","on"); on("telem","on");
+  startTelemetry();
+
+  const lines=[
+    `> INIT RF SWEEP 2.4 GHz...`,
+    `> SCANNING SUB-GHZ BANDS...`,
+    `> BLE DISCOVERY ACTIVE`,
+    `> PROBE: ${rH(4)}:${rH(4)}:${rH(4)}`,
+    `> RSSI: -${(Math.random()*40+30)|0} dBm`,
+    `> BEACON: ${rH(8)}`,
+    `> CH: ${(Math.random()*13+1)|0} | PWR: ${(Math.random()*20+10)|0}dBm`,
+    `> SIG MATCH: ${dev.proto}`,
+    `> MAC: ${dev.mac}`,
+    `> FINGERPRINT: ${rH(16)}`,
+    `> ANALYZING FIRMWARE SIG...`,
+    `> FW: ${dev.fw}`,
+    `> QUERYING VULN DATABASE...`,
+    `> MATCH FOUND >>>`
+  ];
+  const ds=$("datastream");
+  for(const txt of lines){
+    const d=document.createElement("div");
+    d.className="ln"; d.textContent=txt;
+    ds.appendChild(d); ds.scrollTop=1e5;
+    await sleep(220+Math.random()*180);
+  }
+
+  await sleep(1400);
+
+  /* phase 2 — identified */
+  $("status-txt").textContent="TARGET LOCKED";
+  off("sweep","on");
+  document.body.classList.add("glitch");
+  await sleep(120);
+  document.body.classList.remove("glitch");
+
+  $("d-name").textContent=dev.name;
+  $("d-type").textContent=dev.type;
+  $("d-rows").innerHTML=`PROTOCOL: <span>${dev.proto}</span><br>MAC ADDR: <span>${dev.mac}</span><br>FIRMWARE: <span>${dev.fw}</span>`;
+  $("d-vuln").textContent=dev.vuln;
+  on("devcard","on");
+
+  await sleep(3200);
+
+  /* phase 3 — upload */
+  off("reticle","on"); off("datastream","on"); off("telem","on"); off("devcard","on");
+  stopTelemetry();
+  $("status-txt").textContent="UPLOADING";
+
+  $("mod-info").innerHTML=`<b>MODULE:</b> ${dev.mod}.fap<br><b>SIZE:</b> ${dev.sz}<br><b>TARGET:</b> ${dev.name}<br><b>ATTACK:</b> ${dev.atk}`;
+
+  /* compile */
+  $("up-title").textContent="COMPILING MODULE...";
+  $("up-status").textContent=`Building ${dev.mod}.fap`;
+  const bar=$("up-bar");
+  bar.className="bar compile"; bar.style.width="0%";
+  $("up-pct").style.color="#ff6600";
+  on("upload","on");
+  await animateBar(bar,$("up-pct"),38);
+
+  await sleep(400);
+
+  /* transfer */
+  $("up-title").textContent="UPLOADING TO FLIPPER ZERO...";
+  bar.className="bar xfer"; bar.style.width="0%";
+  $("up-pct").style.color="#00e5ff";
+  const szNum=parseFloat(dev.sz);
+  await animateBar(bar,$("up-pct"),45,p=>{
+    $("up-status").textContent=`BLE Serial \u25B8 Flipper [${(p/100*szNum).toFixed(1)} / ${dev.sz}]`;
+  });
+
+  $("up-status").textContent="Transfer complete";
+  await sleep(900);
+
+  /* phase 4 — success */
+  off("upload","on"); off("hud","on"); off("topbar","on");
+  on("success","on");
+}
+
+/* ============================================================
+   PROGRESS BAR HELPER
+   ============================================================ */
+function animateBar(bar,pctEl,speed,cb){
+  return new Promise(resolve=>{
+    let v=0;
+    const tick=()=>{
+      v+=Math.random()*3.5+.8;
+      if(v>=100){v=100;bar.style.width="100%";pctEl.textContent="100%";if(cb)cb(100);resolve();return}
+      const p=Math.round(v);
+      bar.style.width=p+"%"; pctEl.textContent=p+"%";
+      if(cb)cb(p);
+      setTimeout(tick,speed);
+    };
+    setTimeout(tick,150);
+  });
+}
+
+/* ============================================================
+   TELEMETRY
+   ============================================================ */
+function startTelemetry(){
+  const t=$("telem");
+  const upd=()=>{
+    t.innerHTML=`<div>FREQ ${(2.4+Math.random()*.1).toFixed(3)} GHz</div>
+      <div>RSSI -${(Math.random()*40+30)|0} dBm</div>
+      <div>SNR ${(Math.random()*20+10)|0} dB</div>
+      <div>PKT ${(Math.random()*9000+1000)|0}</div>
+      <div>LAT ${(Math.random()*5+1).toFixed(1)} ms</div>`;
+  };
+  upd(); telemTimer=setInterval(upd,320);
+}
+function stopTelemetry(){clearInterval(telemTimer)}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+function resetAll(){
+  const v=$("cam");
+  if(v.srcObject){v.srcObject.getTracks().forEach(t=>t.stop());v.srcObject=null}
+  off("cam","on"); off("cam-dim","on"); off("hud","on"); off("topbar","on");
+  off("reticle","on"); off("sweep","on"); off("datastream","on"); off("telem","on");
+  off("devcard","on"); off("upload","on"); off("success","on"); off("init","hide");
+  $("datastream").innerHTML="";
+  $("up-bar").style.width="0%";
+  stopTelemetry();
+}
+</script>
+</body>
+</html>

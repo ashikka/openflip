@@ -1,0 +1,13 @@
+App(
+    appid="openflip_recv",
+    name="OpenFlip",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="openflip_recv_app",
+    sources=["openflip_recv.c"],
+    requires=["gui"],
+    stack_size=2 * 1024,
+    fap_category="Tools",
+    fap_version=(0, 1),
+    fap_description="OpenFlip red team module receiver visualization",
+    fap_author="OpenFlip",
+)
