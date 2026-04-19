@@ -19,20 +19,22 @@ export default function Footer() {
   const [joined, setJoined] = useState<WaitlistSuccess | null>(null)
 
   return (
-    <footer className="border-t-2 border-amber/40 bg-ink">
-      <div className="mx-auto w-full max-w-shell px-5 py-10 sm:px-8">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-4">
-            <Bit state="sleeping" size={64} />
+    <footer className="border-t border-amber/30 bg-ink sm:border-t-2 sm:border-amber/40">
+      <div className="mx-auto w-full max-w-shell px-4 py-6 sm:px-8 sm:py-10">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Bit state="sleeping" size={52} className="shrink-0" />
             <div>
-              <div className="font-display text-[2rem] uppercase leading-none">Missed the ping?</div>
-              <p className="mt-1 text-[0.78rem] uppercase tracking-[0.14em] text-amber/60">
+              <div className="font-display text-[1.5rem] uppercase leading-none sm:text-[2rem]">
+                Missed the ping?
+              </div>
+              <p className="mt-1 text-[0.68rem] uppercase tracking-[0.14em] text-amber/60 sm:text-[0.78rem]">
                 Join the waitlist — be first in the pod.
               </p>
             </div>
           </div>
 
-          <div className="w-full lg:max-w-md">
+          <div className="hidden w-full sm:block lg:max-w-md">
             <EmailCapture
               buttonLabel="Join"
               onSuccess={setJoined}
@@ -42,11 +44,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-4 border-t border-amber/20 pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[0.7rem] uppercase tracking-[0.16em] text-amber/50">
+        <div className="mt-6 flex flex-col gap-3 border-t border-amber/20 pt-4 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:pt-5">
+          <p className="text-[0.6rem] uppercase tracking-[0.14em] text-amber/50 sm:text-[0.7rem] sm:tracking-[0.16em]">
             Independent project · Not affiliated with Flipper Devices Inc.
           </p>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-4 sm:gap-5">
             <FooterLink href="https://github.com/ashikka/openflip">GitHub</FooterLink>
             <FooterLink href="https://x.com/openflip">X</FooterLink>
             <FooterLink href="https://discord.gg/openflip">Discord</FooterLink>

@@ -5,10 +5,10 @@ import Hero from './components/Hero'
 function App() {
   return (
     <div className="relative min-h-screen bg-ink text-amber">
-      <header className="sticky top-0 z-40 border-b-2 border-amber/40 bg-ink/95 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-shell items-center justify-between px-5 py-3 sm:px-8">
-          <a href="#top" className="flex items-center gap-3">
-            <svg viewBox="0 0 24 24" className="h-8 w-8" aria-hidden="true">
+      <header className="sticky top-0 z-40 border-b border-amber/30 bg-ink/95 backdrop-blur sm:border-b-2 sm:border-amber/40">
+        <div className="mx-auto flex w-full max-w-shell items-center justify-between px-4 py-2.5 sm:px-8 sm:py-3">
+          <a href="#top" className="flex items-center gap-2 sm:gap-3">
+            <svg viewBox="0 0 24 24" className="h-6 w-6 sm:h-8 sm:w-8" aria-hidden="true">
               <path
                 d="M9 5 L3 12 L9 19"
                 fill="none"
@@ -33,15 +33,15 @@ function App() {
                 strokeLinecap="square"
               />
             </svg>
-            <span className="font-display text-[2.2rem] uppercase leading-none tracking-[0.1em]">OpenFlip</span>
+            <span className="font-display text-[1.7rem] uppercase leading-none tracking-[0.1em] sm:text-[2.2rem]">OpenFlip</span>
           </a>
-          <a href="#top" className="btn !py-2 !px-3 !text-[1.3rem]">Join Waitlist</a>
+          <a href="#top" className="btn !py-1.5 !px-2.5 !text-[1.1rem] sm:!py-2 sm:!px-3 sm:!text-[1.3rem]">Join</a>
         </div>
       </header>
 
-      <main id="top" className="mx-auto w-full max-w-shell px-5 pb-16 pt-8 sm:px-8 sm:pt-12">
+      <main id="top" className="mx-auto w-full max-w-shell px-4 pb-12 pt-6 sm:px-8 sm:pt-12 sm:pb-16">
         <Hero />
-        <div className="mt-20">
+        <div className="mt-12 sm:mt-20">
           <Features />
         </div>
       </main>

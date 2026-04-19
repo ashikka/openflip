@@ -29,7 +29,7 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.04;
+  opacity: 0.025;
   background-image:
     linear-gradient(rgba(255, 130, 0, 0.5) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 130, 0, 0.5) 1px, transparent 1px);
@@ -42,7 +42,7 @@ body::after {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.06;
+  opacity: 0.03;
   background: repeating-linear-gradient(
     180deg,
     rgba(255, 169, 64, 0.5) 0,
@@ -51,6 +51,11 @@ body::after {
     transparent 3px
   );
   z-index: 1;
+}
+
+@media (min-width: 640px) {
+  body::before { opacity: 0.04; }
+  body::after { opacity: 0.06; }
 }
 
 a {
@@ -86,23 +91,23 @@ input {
 
 @layer components {
   .panel {
-    @apply border-2 border-amber bg-ink;
+    @apply border border-amber bg-ink sm:border-2;
   }
 
   .panel-dim {
-    @apply border-2 border-amber/40 bg-ink;
+    @apply border border-amber/40 bg-ink sm:border-2;
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 border-2 border-amber bg-amber px-5 py-3 font-display uppercase tracking-[0.08em] text-ink text-[1.6rem] leading-none transition-colors duration-75 hover:bg-highlight hover:border-highlight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 border border-amber bg-amber px-4 py-2.5 font-display uppercase tracking-[0.08em] text-ink text-[1.4rem] leading-none transition-colors duration-75 hover:bg-highlight hover:border-highlight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan disabled:cursor-not-allowed disabled:opacity-50 sm:border-2 sm:px-5 sm:py-3 sm:text-[1.6rem];
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 border-2 border-amber bg-transparent px-5 py-3 font-display uppercase tracking-[0.08em] text-amber text-[1.6rem] leading-none transition-colors duration-75 hover:bg-amber hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan;
+    @apply inline-flex items-center justify-center gap-2 border border-amber bg-transparent px-4 py-2.5 font-display uppercase tracking-[0.08em] text-amber text-[1.4rem] leading-none transition-colors duration-75 hover:bg-amber hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan sm:border-2 sm:px-5 sm:py-3 sm:text-[1.6rem];
   }
 
   .field {
-    @apply w-full border-2 border-amber bg-ink px-4 py-3 font-display text-[1.9rem] uppercase tracking-[0.06em] leading-none text-amber placeholder:text-amber/40 focus:border-cyan focus:outline-none;
+    @apply w-full border border-amber bg-ink px-3 py-2.5 font-display text-[1.5rem] uppercase tracking-[0.04em] leading-none text-amber placeholder:text-amber/40 focus:border-cyan focus:outline-none sm:border-2 sm:px-4 sm:py-3 sm:text-[1.9rem] sm:tracking-[0.06em];
   }
 
   .chip {
