@@ -1,0 +1,22 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+
+name = "openflip-landing"
+account_id = "2946983c2f4d5a5f4c669d74ce5f42ca"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-04-19"
+
+[vars]
+IP_SALT = "replace-me-with-a-long-random-dev-secret"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "openflip-waitlist-dev"
+database_id = "9df2a20b-a2e8-426e-a513-f84b43244ccc"
+
+[env.production.vars]
+IP_SALT = "replace-me-with-a-long-random-prod-secret"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "openflip-waitlist-prod"
+database_id = "3b3ea4a6-4c5a-4ef6-a198-f01887ffd131"
